@@ -1,38 +1,41 @@
-
-import { useState } from "react";
+import { InsuranceFormProvider } from "@/contexts/InsuranceFormContext";
 import { Card } from "@/components/ui/card";
+import { useInsuranceForm } from "@/contexts/InsuranceFormContext";
+import { Progress } from "@/components/ui/progress";
+import { CoverageForm } from "@/components/CoverageForm";
+import { RiskProfileForm } from "@/components/RiskProfileForm";
+import { RecommendationsView } from "@/components/RecommendationsView";
+import { Loader } from "lucide-react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Progress } from "@/components/ui/progress";
 import { ArrowRight } from "lucide-react";
 
-const Index = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    age: "",
-    occupation: "",
-    annualIncome: "",
-    dependents: "",
-    zipCode: "",
-  });
+function FormSteps() {
+  const { currentStep, isLoading } = useInsuranceForm();
+  
+  const steps = [
+    { id: "personal", label: "Personal Info" },
+    { id: "coverage", label: "Coverage & Assets" },
+    { id: "risk", label: "Risk Profile" },
+    { id: "recommendations", label: "Recommendations" },
+  ];
+  
+  const currentStepIndex = steps.findIndex(step => step.id === currentStep);
+  const progress = ((currentStepIndex + 1) / steps.length) * 100;
 
-  const totalSteps = 4;
-  const currentStep = 1;
-  const progress = (currentStep / totalSteps) * 100;
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-  };
-
-  const handleNext = () => {
-    console.log("Form data:", formData);
-    // Handle form submission logic here
-  };
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-fade-in">
+        <div className="bg-white p-8 rounded-lg shadow-xl flex items-center gap-4">
+          <Loader className="animate-spin" />
+          <p className="text-lg">Analyzing your profile...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4 sm:p-6 md:p-8">
@@ -47,23 +50,61 @@ const Index = () => {
 
           <div className="space-y-2">
             <div className="flex justify-between text-sm text-gray-600">
-              <span>Step {currentStep} of {totalSteps}</span>
+              <span>Step {currentStepIndex + 1} of {steps.length}</span>
               <span>{progress}% Complete</span>
             </div>
             <Progress value={progress} className="h-2" />
           </div>
 
           <div className="flex items-center gap-4 text-gray-500 text-sm">
-            <div className={`font-medium ${currentStep === 1 ? "text-blue-600" : ""}`}>Personal Info</div>
-            <div className="h-px bg-gray-200 flex-1" />
-            <div className="text-gray-400">Coverage & Assets</div>
-            <div className="h-px bg-gray-200 flex-1" />
-            <div className="text-gray-400">Risk Profile</div>
-            <div className="h-px bg-gray-200 flex-1" />
-            <div className="text-gray-400">Recommendations</div>
+            {steps.map((step, index) => (
+              <React.Fragment key={step.id}>
+                <div className={`font-medium ${currentStep === step.id ? "text-blue-600" : ""}`}>
+                  {step.label}
+                </div>
+                {index < steps.length - 1 && <div className="h-px bg-gray-200 flex-1" />}
+              </React.Fragment>
+            ))}
           </div>
 
-          <div className="space-y-6">
+          {currentStep === "personal" && (
+            <div className="animate-fade-in">
+              
+            <PersonalInformationForm/>
+            </div>
+          )}
+          
+          {currentStep === "coverage" && <CoverageForm />}
+          {currentStep === "risk" && <RiskProfileForm />}
+          {currentStep === "recommendations" && <RecommendationsView />}
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+export default function Index() {
+  return (
+    <InsuranceFormProvider>
+      <FormSteps />
+    </InsuranceFormProvider>
+  );
+}
+
+const PersonalInformationForm = () => {
+    const {setFormData, formData, setCurrentStep} = useInsuranceForm()
+    const handleInputChange = (field: string, value: string) => {
+        setFormData((prev) => ({
+          ...prev,
+          [field]: value,
+        }));
+      };
+    
+      const handleNext = () => {
+        setCurrentStep("coverage")
+      };
+    return(
+        <div className="space-y-6">
             <h2 className="text-2xl font-semibold">Personal Information</h2>
 
             <div className="space-y-4">
@@ -159,10 +200,5 @@ const Index = () => {
               </Button>
             </div>
           </div>
-        </div>
-      </Card>
-    </div>
-  );
-};
-
-export default Index;
+    )
+}
