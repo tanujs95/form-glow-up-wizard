@@ -1,11 +1,12 @@
-
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { useInsuranceForm } from "@/contexts/InsuranceFormContext";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 
 export function RecommendationsView() {
   const { formData } = useInsuranceForm();
+  const navigate = useNavigate();
 
   return (
     <div className="animate-fade-in space-y-8">
@@ -75,9 +76,10 @@ export function RecommendationsView() {
             Start Over
           </Button>
           <Button
+            onClick={() => navigate("/listings")}
             className="bg-green-600 hover:bg-green-700 hover:scale-105 transition-transform"
           >
-            Save Recommendations
+            View All Recommendations
           </Button>
         </div>
       </div>
