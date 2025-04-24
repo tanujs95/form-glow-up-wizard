@@ -1,3 +1,5 @@
+
+import React, { useState } from "react";
 import { InsuranceFormProvider } from "@/contexts/InsuranceFormContext";
 import { Card } from "@/components/ui/card";
 import { useInsuranceForm } from "@/contexts/InsuranceFormContext";
@@ -6,7 +8,6 @@ import { CoverageForm } from "@/components/CoverageForm";
 import { RiskProfileForm } from "@/components/RiskProfileForm";
 import { RecommendationsView } from "@/components/RecommendationsView";
 import { Loader } from "lucide-react";
-import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -69,8 +70,7 @@ function FormSteps() {
 
           {currentStep === "personal" && (
             <div className="animate-fade-in">
-              
-            <PersonalInformationForm/>
+              <PersonalInformationForm/>
             </div>
           )}
           
@@ -92,17 +92,16 @@ export default function Index() {
 }
 
 const PersonalInformationForm = () => {
-    const {setFormData, formData, setCurrentStep} = useInsuranceForm()
-    const handleInputChange = (field: string, value: string) => {
-        setFormData((prev) => ({
-          ...prev,
-          [field]: value,
-        }));
-      };
+    const {setFormData, formData, setCurrentStep} = useInsuranceForm();
     
-      const handleNext = () => {
-        setCurrentStep("coverage")
-      };
+    const handleInputChange = (field: string, value: string) => {
+      setFormData({ [field]: value });
+    };
+    
+    const handleNext = () => {
+      setCurrentStep("coverage");
+    };
+    
     return(
         <div className="space-y-6">
             <h2 className="text-2xl font-semibold">Personal Information</h2>
@@ -200,5 +199,5 @@ const PersonalInformationForm = () => {
               </Button>
             </div>
           </div>
-    )
-}
+    );
+};

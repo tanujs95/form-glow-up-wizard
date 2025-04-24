@@ -1,7 +1,8 @@
 
-import { Button } from "@/components/ui/card";
+import React from "react";
+import { Button } from "@/components/ui/button";
 import { useInsuranceForm } from "@/contexts/InsuranceFormContext";
-import { Card } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 
 export function RecommendationsView() {
   const { formData } = useInsuranceForm();
